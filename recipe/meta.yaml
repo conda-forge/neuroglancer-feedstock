@@ -11,7 +11,7 @@ source:
 
 build:
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation --no-index -vv
-  number: 1
+  number: 2
 
 requirements:
   build:
@@ -40,13 +40,30 @@ requirements:
     - requests >=2.32.3
     - tornado >=6.4.2
 
+# We just run tests that don't require a browser.
+{% set test_scripts = [
+  "equivalence_map_test.py",
+  "json_wrappers_test.py",
+  "local_volume_test.py",
+  "managed_layer_test.py",
+  "merge_tool_test.py",
+  "on_demand_mesh_generator_test.py",
+  "url_state_test.py",
+  "viewer_state_test.py",
+  "write_annotations_test.py"
+] -%}
+
 test:
   imports:
     - neuroglancer
   requires:
     - pip
+    - pytest
+  source_files:
+    - python/tests
   commands:
     - pip check
+    - cd python/tests && pytest {{ test_scripts | join(" ") }}
 
 about:
   home: https://github.com/google/neuroglancer

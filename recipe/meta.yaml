@@ -8,10 +8,12 @@ package:
 source:
   url: https://github.com/google/neuroglancer/archive/refs/tags/v{{ version }}.tar.gz
   sha256: 7fc3c19dc516cce1418fedffdc909efb76630a7aaa2f53f7dc0a50239a7c8545
+  patches:
+    - patches/osx-arm64/copy_openmesh_deps.py.patch  # [osx and build_platform != target_platform]
 
 build:
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation --no-index -vv
-  number: 2
+  number: 3
 
   # This package should support Windows, but the feedstock fails to build right now.
   # error: [WinError 2] The system cannot find the file specified
@@ -21,8 +23,8 @@ requirements:
   build:
     - python                                 # [build_platform != target_platform]
     - cross-python_{{ target_platform }}     # [build_platform != target_platform]
-    - cython                                 # [build_platform != target_platform]
     - numpy                                  # [build_platform != target_platform]
+    - nodejs >=22,<24                        # [build_platform != target_platform]
     - {{ compiler('c') }}
     - {{ stdlib('c') }}
     - {{ compiler('cxx') }}
@@ -33,7 +35,7 @@ requirements:
     - setuptools
     - setuptools_scm >=8.1.0
     - numpy
-    - nodejs-wheel >=22,<24
+    - nodejs-wheel >=22,<24              # [build_platform == target_platform]
   run:
     - python
     - numpy

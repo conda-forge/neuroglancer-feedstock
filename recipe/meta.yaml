@@ -13,6 +13,10 @@ build:
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation --no-index -vv
   number: 2
 
+  # This package should support Windows, but the feedstock fails to build right now.
+  # error: [WinError 2] The system cannot find the file specified
+  skip: true  # [win]
+
 requirements:
   build:
     - python                                 # [build_platform != target_platform]

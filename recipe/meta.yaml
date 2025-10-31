@@ -6,12 +6,16 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/neuroglancer-{{ version }}.tar.gz
-  sha256: 2c519da54169d141053e14940115f4b4cbdf88d24a9114cd3ae236ea62f16216
+  url: https://github.com/google/neuroglancer/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: 7fc3c19dc516cce1418fedffdc909efb76630a7aaa2f53f7dc0a50239a7c8545
 
 build:
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation --no-index -vv
-  number: 1
+  number: 2
+
+  # This package should support Windows, but the feedstock fails to build right now.
+  # error: [WinError 2] The system cannot find the file specified
+  skip: true  # [win]
 
 requirements:
   build:
@@ -27,7 +31,9 @@ requirements:
     - python
     - pip
     - setuptools
+    - setuptools_scm >=8.1.0
     - numpy
+    - nodejs-wheel >=22,<24
   run:
     - python
     - numpy
@@ -45,8 +51,16 @@ test:
     - neuroglancer
   requires:
     - pip
+    - pytest
+  source_files:
+    - python/tests
+    - testdata
   commands:
     - pip check
+   # We just run tests that don't require a browser.
+    - cd python/tests && pytest
+      equivalence_map_test.py json_wrappers_test.py local_volume_test.py managed_layer_test.py merge_tool_test.py
+      on_demand_mesh_generator_test.py url_state_test.py viewer_state_test.py write_annotations_test.py
 
 about:
   home: https://github.com/google/neuroglancer

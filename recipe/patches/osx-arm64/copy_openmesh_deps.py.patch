@@ -1,0 +1,14 @@
+diff --git a/python/copy_openmesh_deps.py b/python/copy_openmesh_deps.py
+index 6b32e8bf..0d372d53 100755
+--- a/python/copy_openmesh_deps.py
++++ b/python/copy_openmesh_deps.py
+@@ -18,7 +18,8 @@ openmesh_dir = os.path.abspath(args.openmesh_directory)
+ 
+ deps = subprocess.check_output(
+     [
+-        "gcc",
++        # https://conda-forge.org/blog/2020/10/29/macos-arm64/
++        os.environ['CXX_FOR_BUILD'],
+         "-pthread",
+         "-I",
+         os.path.join(openmesh_dir, "src"),

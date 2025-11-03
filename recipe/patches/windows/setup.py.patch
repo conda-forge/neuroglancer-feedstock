@@ -1,0 +1,38 @@
+diff --git a/setup.py b/setup.py
+index 4a015b15..e8ac35d9 100755
+--- a/setup.py
++++ b/setup.py
+@@ -9,6 +9,7 @@ import pathlib
+ import platform
+ import shutil
+ import subprocess
++import sys
+ import tempfile
+ 
+ import setuptools
+@@ -219,10 +220,23 @@ class BundleClientCommand(
+         if self.skip_npm_reinstall and os.path.exists(node_modules_path):
+             print(f"Skipping `npm install` since {node_modules_path} already exists")
+         else:
+-            subprocess.run(["npm", "install"], cwd=root_dir, check=True)
++            # Find npm executable (handles .CMD files on Windows)
++            npm_path = shutil.which("npm")
++            if npm_path is None:
++                raise FileNotFoundError("npm executable not found in PATH")
++            
++            print(f"Running npm install using: {npm_path}")
++            subprocess.run([npm_path, "install"], cwd=root_dir, check=True)
++        
++        # Find npm executable for build step
++        npm_path = shutil.which("npm")
++        if npm_path is None:
++            raise FileNotFoundError("npm executable not found in PATH")
++        
++        print(f"Running npm run build-python using: {npm_path}")
+         subprocess.run(
+             [
+-                "npm",
++                npm_path,
+                 "run",
+                 "build-python",
+                 "--",

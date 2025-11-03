@@ -10,14 +10,11 @@ source:
   sha256: 7fc3c19dc516cce1418fedffdc909efb76630a7aaa2f53f7dc0a50239a7c8545
   patches:
     - patches/osx-arm64/copy_openmesh_deps.py.patch  # [osx and build_platform != target_platform]
+    - patches/windows/setup.py.patch  # [win]
 
 build:
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation --no-index -vv
-  number: 3
-
-  # This package should support Windows, but the feedstock fails to build right now.
-  # error: [WinError 2] The system cannot find the file specified
-  skip: true  # [win]
+  number: 4
 
 requirements:
   build:
